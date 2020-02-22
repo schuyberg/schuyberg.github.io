@@ -1,0 +1,19 @@
+{
+  "name": "schuyberg4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "build": "parcel build index.html --public-url . --out-dir ../dist",
+    "dev": "parcel index.html --out-dir ../dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "underscore": "^1.9.2"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10"
+  }
+}

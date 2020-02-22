@@ -1,0 +1,54 @@
+body {
+  font-size: 13px;
+  font-family: 'Muli', sans-serif;
+  margin: 0;
+  background-color: black;
+  color: #474747;
+}
+
+a, a:visited{
+  color: #474747;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #999999;
+  text-decoration: underline;
+}
+
+.hidden {
+  display: none;
+}
+
+.menu {
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  right: 30px;
+}
+
+.menu.name {
+  position: absolute;
+  background-color: black;
+  display:block;
+  padding: 3px;
+  top: 2px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  white-space: nowrap;
+}
+
+.linkbox {
+  display: block;
+  border: 1px solid #333333;
+  padding: 10px 20px;
+  min-width: 180px;
+}
+
+.linkbox.li {
+  font-size: 12px;
+  list-style-type: none;
+}
+
+
+/*# sourceMappingURL=/styles.b61e60ae.css.map */
