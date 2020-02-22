@@ -4,8 +4,8 @@
   "description": "",
   "main": "",
   "scripts": {
-    "build": "parcel build index.html --public-url . --out-dir ../dist",
-    "dev": "parcel index.html --out-dir ../dist"
+    "build": "parcel build index.html --public-url . --out-dir ../",
+    "dev": "parcel index.html --out-dir ../"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +14,7 @@
     "underscore": "^1.9.2"
   },
   "devDependencies": {
-    "cssnano": "^4.1.10"
+    "cssnano": "^4.1.10",
+    "parcel-plugin-clean-dist": "0.0.6"
   }
 }
