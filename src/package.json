@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-    "build": "parcel build index.html --public-url . --out-dir ../",
+    "build": "rm ../main.*.js; rm ../styles.*.css; parcel build index.html --public-url . --out-dir ../",
     "dev": "parcel index.html --out-dir ../"
   },
   "author": "",
@@ -14,7 +14,6 @@
     "underscore": "^1.9.2"
   },
   "devDependencies": {
-    "cssnano": "^4.1.10",
-    "parcel-plugin-clean-dist": "0.0.6"
+    "cssnano": "^4.1.10"
   }
 }

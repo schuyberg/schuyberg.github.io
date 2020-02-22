@@ -1,171 +1,174 @@
-import Two from './two';
-import _ from 'underscore';
+  import Two from './two';
+  import _ from 'underscore';
 
-(function() {
+  (function() {
 
-  const increment = Math.PI / 256;
-  const TWO_PI = Math.PI * 2;
-  const PI = Math.PI;
+    const increment = Math.PI / 256;
+    const TWO_PI = Math.PI * 2;
+    const PI = Math.PI;
 
-  // var type = /(canvas|webgl)/.test(url.type) ? url.type : 'svg';
-  const type = 'canvas';
-  const two = new Two({
-    // type: Two.Types[type],
-    fullscreen: true,
-  }).appendTo(document.getElementById('triangles'));
+    // var type = /(canvas|webgl)/.test(url.type) ? url.type : 'svg';
+    const type = 'canvas';
+    const two = new Two({
+      // type: Two.Types[type],
+      fullscreen: true,
+    }).appendTo(document.getElementById('triangles'));
 
-  // var background = two.makeGroup();
-  const back = two.makeGroup();
-  const triangleGroup = two.makeGroup();
-  // var foreground = two.makeGroup();
+    // var background = two.makeGroup();
+    const back = two.makeGroup();
+    const triangleGroup = two.makeGroup();
+    // var foreground = two.makeGroup();
 
-  // var tri1 = makeTriangle(two, 300);
-  // tri1.translation.set(two.width / 2, two.height / 2);
-  // middleground.add(tri1);
+    // var tri1 = makeTriangle(two, 300);
+    // tri1.translation.set(two.width / 2, two.height / 2);
+    // middleground.add(tri1);
 
-  const triangles = [];
+    const triangles = [];
 
-  _.each([0, 1, 2, 3, 4, 5, 6, 7, 8], function(n) {
-    triangles[n] = makeTriangle(two);
-    triangles[n].translation.set(two.width / 2, two.height / 2);
-    triangleGroup.add(triangles[n]);
-  });
+    _.each([0, 1, 2, 3, 4, 5, 6, 7, 8], function(n) {
+      triangles[n] = makeTriangle(two);
+      triangles[n].translation.set(two.width / 2, two.height / 2);
+      triangleGroup.add(triangles[n]);
+    });
 
-  // triangleGroup.scale = 0;
+    // triangleGroup.scale = 0;
 
-  const logo = document.getElementById('sl-logo');
+    const logo = document.getElementById('sl-logo').getElementsByTagName('svg')[0];
 
-  const sl = two.interpret(logo).center();
-  sl.translation.set(two.width / 2, two.height / 2);
-  sl.fill = 'rgba(0,0,0,0.66)';
-  sl.scale = 1;
+    const sl = two.interpret(logo).center();
+    sl.translation.set(two.width / 2, two.height / 2);
+    sl.fill = 'rgba(0,0,0,0.66)';
+    sl.scale = 100;
 
-  // back.add(sl);
+    // back.add(sl);
 
-  two.bind('update', function(frameCount) {
-    if (sl.scale > 1) {
-      sl.scale = sl.scale - 0.1;
+    two.bind('update', function(frameCount) {
+      if (sl.scale > 0.1) {
+        sl.scale = sl.scale - 0.1;
+      } else {
+        sl.remove();
+      }
+      // else if ( sl.opacity > 0 ) {
+      //   sl.opacity = sl.opacity - 0.01;
+      // }
+    });
+
+    _.defer(function() {
+      two.play();
+    });
+
+  })();
+
+  function makeTriangle(two) {
+    const TWO_PI = Math.PI * 2,
+        side0 = new Two.Anchor(-randSize() / 2, 0),
+        side1 = new Two.Anchor(randSize() / 2, 0),
+        side2 = new Two.Anchor(0, randSize());
+
+    // console.log(side0, side1, side2);
+    // var tri = two.makePolygon(- randSize() / 2, 0, randSize() / 2, 0, 0, randSize());
+    const tri = two.makePath([side0, side1, side2]);
+    // const tri = two.makePolygon(0,0, randSize())
+
+    tri.fill = 'rgba(200,200,200,0.05)';
+    // tri.fill = 'rgba(0,0,0,0.26)';
+    tri.rotation = Math.PI - randSize();
+    tri.noStroke();
+    tri.rAmt = _.random(5, 24) * 0.0001;
+    tri.rDir = randDir();
+    tri.sideScale = ['up', 'up', 'down'];
+    tri.sideMax = [randSize(), randSize(), randSize()];
+    tri.sideSpeed = [randSideSpeed(), randSideSpeed(), randSideSpeed()];
+
+    console.log(tri.vertices);
+
+    two.bind('update', function(frameCount) {
+      // spin
+      if (tri.rotation > TWO_PI) {
+        tri.rotation = 0;
+      }
+      if (tri.rDir === 'r') {
+        tri.rotation += tri.rAmt;
+      } else {
+        tri.rotation -= tri.rAmt;
+      }
+      // size/shape
+
+      shiftX(0);
+      shiftX(1);
+      shiftY(2);
+
+      function shiftX(i) {
+        const v = tri.vertices[i];
+        let x = v.x;
+        const y = v.y;
+        if (x === tri.sideMax[i]) {
+          tri.sideMax[i] = randSize();
+          tri.sideSpeed = randSideSpeed();
+        }
+
+        if (v.x > tri.sideMax[i]) { tri.sideScale[i] = 'down'; }
+
+        if (v.x < -tri.sideMax[i]) { tri.sideScale[i] = 'up';}
+
+        if (tri.sideScale[i] === 'up') {
+          x = x + tri.sideSpeed[i];
+        }
+        if (tri.sideScale[i] === 'down') {
+          x = x - tri.sideSpeed[i];
+        }
+        v.x = x;
+      }
+
+      function shiftY(i) {
+        const v = tri.vertices[i];
+        const x = v.x;
+        let y = v.y;
+        if (y === tri.sideMax[i]) {
+          tri.sideMax[i] = randSize();
+          tri.sideSpeed = randSideSpeed();
+        }
+        if (v.x > tri.sideMax[i]) { tri.sideScale[i] = 'down'; }
+
+        if (v.x < -tri.sideMax[i]) { tri.sideScale[i] = 'up';}
+
+        if (tri.sideScale[i] === 'up') {
+          y = y + tri.sideSpeed[i];
+        }
+        if (tri.sideScale[i] === 'down') {
+          y = y - tri.sideSpeed[i];
+        }
+        v.y = y;
+      }
+
+      // tri.translation.set(two.width / 2, two.height / 2);
+
+    });
+
+    // tri.center();
+    console.log(tri.sideSpeed);
+    return tri;
+
+    function randSideSpeed() {
+      let num = _.random(5, 100);
+      num = num * .001;
+      return num;
     }
-  });
 
-  _.defer(function() {
-
-    two.play();
-
-  });
-
-})();
-
-function makeTriangle(two) {
-  const TWO_PI = Math.PI * 2,
-      side0 = new Two.Anchor(-randSize() / 2, 0),
-      side1 = new Two.Anchor(randSize() / 2, 0),
-      side2 = new Two.Anchor(0, randSize());
-
-  // console.log(side0, side1, side2);
-  // var tri = two.makePolygon(- randSize() / 2, 0, randSize() / 2, 0, 0, randSize());
-  const tri = two.makePath([side0, side1, side2]);
-  // const tri = two.makePolygon(0,0, randSize())
-
-  tri.fill = 'rgba(100,100,100,0.10)';
-  // tri.fill = 'rgba(0,0,0,0.26)';
-  tri.rotation = Math.PI - randSize();
-  tri.noStroke();
-  tri.rAmt = _.random(5, 24) * 0.0001;
-  tri.rDir = randDir();
-  tri.sideScale = ['up', 'up', 'down'];
-  tri.sideMax = [randSize(), randSize(), randSize()];
-  tri.sideSpeed = [randSideSpeed(), randSideSpeed(), randSideSpeed()];
-
-  console.log(tri.vertices);
-
-  two.bind('update', function(frameCount) {
-    // spin
-    if (tri.rotation > TWO_PI) {
-      tri.rotation = 0;
-    }
-    if (tri.rDir === 'r') {
-      tri.rotation += tri.rAmt;
-    } else {
-      tri.rotation -= tri.rAmt;
-    }
-    // size/shape
-
-    shiftX(0);
-    shiftX(1);
-    shiftY(2);
-
-    function shiftX(i) {
-      const v = tri.vertices[i];
-      let x = v.x;
-      const y = v.y;
-      if (x === tri.sideMax[i]) {
-        tri.sideMax[i] = randSize();
-        tri.sideSpeed = randSideSpeed();
-      }
-
-      if (v.x > tri.sideMax[i]) { tri.sideScale[i] = 'down'; }
-
-      if (v.x < -tri.sideMax[i]) { tri.sideScale[i] = 'up';}
-
-      if (tri.sideScale[i] === 'up') {
-        x = x + tri.sideSpeed[i];
-      }
-      if (tri.sideScale[i] === 'down') {
-        x = x - tri.sideSpeed[i];
-      }
-      v.x = x;
+    function randSize() {
+      const num = _.random(200, two.height-200);
+      Math.floor(num);
+      return num;
     }
 
-    function shiftY(i) {
-      const v = tri.vertices[i];
-      const x = v.x;
-      let y = v.y;
-      if (y === tri.sideMax[i]) {
-        tri.sideMax[i] = randSize();
-        tri.sideSpeed = randSideSpeed();
-      }
-      if (v.x > tri.sideMax[i]) { tri.sideScale[i] = 'down'; }
-
-      if (v.x < -tri.sideMax[i]) { tri.sideScale[i] = 'up';}
-
-      if (tri.sideScale[i] === 'up') {
-        y = y + tri.sideSpeed[i];
-      }
-      if (tri.sideScale[i] === 'down') {
-        y = y - tri.sideSpeed[i];
-      }
-      v.y = y;
+    function randDir() {
+      const i = _.random(1, 2);
+      return (i === 1) ? 'r' : 'l';
     }
 
-    // tri.translation.set(two.width / 2, two.height / 2);
-
-  });
-
-  // tri.center();
-  console.log(tri.sideSpeed);
-  return tri;
-
-  function randSideSpeed() {
-    let num = _.random(5, 100);
-    num = num * .001;
-    return num;
   }
 
-  function randSize() {
-    const num = _.random(200, 427);
-    Math.floor(num);
-    return num;
-  }
 
-  function randDir() {
-    const i = _.random(1, 2);
-    return (i === 1) ? 'r' : 'l';
-  }
 
-}
 
-  
-
-  
 
